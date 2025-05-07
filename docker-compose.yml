@@ -5,7 +5,7 @@ services:
     image: christechstarter/todo-backend:latest
     container_name: todo-backend
     ports:
-      - "5000:5000"
+      - "3050:3050"
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
