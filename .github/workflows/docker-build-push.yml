@@ -19,12 +19,10 @@ jobs:
 
       # 🔑 Login to Docker Hub
       - name: Docker Hub login
-        if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       # 🔑 Login to GitHub Container Registry (GHCR)
       - name: GHCR login
-        if: ${{ secrets.GHCR_USERNAME != '' && secrets.GHCR_TOKEN != '' }}
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
       # 🔨 Build Docker images
