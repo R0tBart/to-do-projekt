@@ -7,4 +7,4 @@ docker pull christechstarter/todo-backend:latest
 echo "🚀 Starting application with docker-compose..."
 docker-compose --env-file .env up -d
 
-echo "✅ Done. Access the app at: http://localhost:3000"
+echo "✅ Done. Access the app at: http://localhost:3050"
