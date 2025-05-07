@@ -2,7 +2,7 @@
 
 hier wird eine To-Do App gebaut!
 
-‼️In docker deskhub beim start noch die ports vergeben‼️
+‼️In docker desktop beim start noch die ports vergeben‼️
 
 
 Test Update
