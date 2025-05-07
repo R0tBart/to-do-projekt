@@ -8,42 +8,44 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     env:
       IMAGE_NAME_BACKEND: todo-backend
       IMAGE_NAME_FRONTEND: todo-frontend
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 🔑 Docker Hub Login
-      - name: Log in to Docker Hub
+      # 🔑 Login to Docker Hub
+      - name: Docker Hub login
+        if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      # 🔑 GHCR Login
-      - name: Log in to GitHub Container Registry
+      # 🔑 Login to GitHub Container Registry (GHCR)
+      - name: GHCR login
+        if: ${{ secrets.GHCR_USERNAME != '' && secrets.GHCR_TOKEN != '' }}
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
-      # 🧱 Build Backend
-      - name: Build backend image
+      # 🔨 Build Docker images
+      - name: Build backend & frontend
         run: |
+          # Backend
           docker build -t christechstarter/${{ env.IMAGE_NAME_BACKEND }}:latest ./backend
-          docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/${{ env.IMAGE_NAME_BACKEND }}:latest ./backend
-
-      # 🧱 Build Frontend
-      - name: Build frontend image
-        run: |
+          docker tag christechstarter/${{ env.IMAGE_NAME_BACKEND }}:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/${{ env.IMAGE_NAME_BACKEND }}:latest
+          
+          # Frontend
           docker build -t christechstarter/${{ env.IMAGE_NAME_FRONTEND }}:latest ./frontend
-          docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/${{ env.IMAGE_NAME_FRONTEND }}:latest ./frontend
+          docker tag christechstarter/${{ env.IMAGE_NAME_FRONTEND }}:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/${{ env.IMAGE_NAME_FRONTEND }}:latest
 
-      # 🚀 Push Backend Images
-      - name: Push backend to Docker Hub and GHCR
+      # 🚀 Push to Docker Hub
+      - name: Push to Docker Hub
         run: |
           docker push christechstarter/${{ env.IMAGE_NAME_BACKEND }}:latest
-          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/${{ env.IMAGE_NAME_BACKEND }}:latest
-
-      # 🚀 Push Frontend Images
-      - name: Push frontend to Docker Hub and GHCR
-        run: |
           docker push christechstarter/${{ env.IMAGE_NAME_FRONTEND }}:latest
+
+      # 🚀 Push to GHCR
+      - name: Push to GitHub Container Registry (GHCR)
+        run: |
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/${{ env.IMAGE_NAME_BACKEND }}:latest
           docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/${{ env.IMAGE_NAME_FRONTEND }}:latest
